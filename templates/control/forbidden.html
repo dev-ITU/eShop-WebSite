@@ -1,0 +1,12 @@
+{% extends "control/base.html" %}
+
+{% block title %}Нет доступа - eShop{% endblock %}
+
+{% block content %}
+<section class="control-empty">
+  <i data-lucide="lock-keyhole"></i>
+  <h1>Нет доступа</h1>
+  <p>Для этого раздела нужна другая роль в панели управления.</p>
+  <a class="control-button" href="{% url 'control_dashboard' %}">Вернуться в обзор</a>
+</section>
+{% endblock %}

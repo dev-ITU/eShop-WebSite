@@ -1,0 +1,60 @@
+{% extends "control/base.html" %}
+
+{% block title %}Заказы - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">{{ total_count }} заказов</p>
+    <h1>Заказы</h1>
+  </div>
+</section>
+
+<form class="control-filters" method="get">
+  <input type="search" name="q" placeholder="Номер, почта, телефон, имя" value="{{ query }}">
+  <select name="status">
+    <option value="">Все статусы</option>
+    {% for value,label in statuses %}
+      <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <select name="payment">
+    <option value="">Все оплаты</option>
+    {% for value,label in payment_statuses %}
+      <option value="{{ value }}" {% if current_payment == value %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button class="control-button" type="submit"><i data-lucide="search"></i>Найти</button>
+</form>
+
+<section class="control-panel">
+  <div class="control-table-wrap">
+    <table class="control-table">
+      <thead>
+        <tr><th>Заказ</th><th>Клиент</th><th>Позиции</th><th>Статус</th><th>Оплата</th><th>Сумма</th><th>Дата</th></tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+          <tr>
+            <td>{{ order.order_number }}<small>Код: {{ order.pickup_code }}</small></td>
+            <td>{{ order.customer_name }}<small>{{ order.email }} · {{ order.phone }}</small></td>
+            <td>
+              {% for item in order.items.all|slice:":2" %}
+                <small>{{ item.product_name }} x {{ item.quantity }}</small>
+              {% endfor %}
+              {% if order.items.count > 2 %}<small>Еще позиций: {{ order.items.count|add:"-2" }}</small>{% endif %}
+            </td>
+            <td><span class="status-pill">{{ order.get_status_display }}</span></td>
+            <td><span class="status-pill {% if order.payment_status == 'failed' %}danger{% endif %}">{{ order.get_payment_status_display }}</span></td>
+            <td>{{ order.total|floatformat:0 }} ₽</td>
+            <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7">Заказы не найдены.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "control/_pagination.html" %}
+</section>
+{% endblock %}

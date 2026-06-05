@@ -1,0 +1,47 @@
+{{ form.non_field_errors }}
+
+<div class="control-field-row">
+  <label class="control-field">
+    <span>{{ form.username.label }}</span>
+    {{ form.username }}
+    {{ form.username.errors }}
+  </label>
+  <label class="control-field">
+    <span>{{ form.first_name.label }}</span>
+    {{ form.first_name }}
+    {{ form.first_name.errors }}
+  </label>
+</div>
+
+<div class="control-field-row">
+  <label class="control-field">
+    <span>{{ form.email.label }}</span>
+    {{ form.email }}
+    {{ form.email.errors }}
+  </label>
+  <label class="control-field">
+    <span>{{ form.role.label }}</span>
+    {{ form.role }}
+    {{ form.role.errors }}
+  </label>
+</div>
+
+<div class="control-field-row">
+  <label class="control-field">
+    <span>{{ form.password1.label }}</span>
+    {{ form.password1 }}
+    {{ form.password1.errors }}
+  </label>
+  <label class="control-field">
+    <span>{{ form.password2.label }}</span>
+    {{ form.password2 }}
+    {{ form.password2.errors }}
+  </label>
+</div>
+
+{% if form.password1.help_text or form.password2.help_text %}
+  <div class="control-form-help">
+    {{ form.password1.help_text }}
+    {{ form.password2.help_text }}
+  </div>
+{% endif %}

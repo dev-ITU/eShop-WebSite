@@ -1,0 +1,12 @@
+.git
+.venv
+__pycache__
+*.pyc
+.DS_Store
+db.sqlite3
+staticfiles
+media
+node_modules
+DjangoTemplate-main 3
+tmp
+.env

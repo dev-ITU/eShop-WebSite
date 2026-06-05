@@ -1,0 +1,40 @@
+{% extends "control/base.html" %}
+
+{% block title %}Категории - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">Структура каталога</p>
+    <h1>Категории</h1>
+  </div>
+  <div class="control-actions">
+    <a class="control-button ghost" href="{% url 'control_products' %}"><i data-lucide="arrow-left"></i>Товары</a>
+    <a class="control-button" href="{% url 'control_category_create' %}"><i data-lucide="plus"></i>Категория</a>
+  </div>
+</section>
+
+<section class="control-panel">
+  <div class="control-table-wrap">
+    <table class="control-table">
+      <thead>
+        <tr><th>Название</th><th>Slug</th><th>Товаров</th><th>Порядок</th><th>Статус</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for category in categories %}
+          <tr>
+            <td>{{ category.name }}<small>{{ category.description|truncatechars:90 }}</small></td>
+            <td>{{ category.slug }}</td>
+            <td>{{ category.products_count }}</td>
+            <td>{{ category.sort_order }}</td>
+            <td>{% if category.is_active %}<span class="status-pill">Активна</span>{% else %}<span class="status-pill muted">Скрыта</span>{% endif %}</td>
+            <td><a class="table-action" href="{% url 'control_category_edit' category.pk %}">Открыть</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6">Категорий пока нет.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

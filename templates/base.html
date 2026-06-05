@@ -1,0 +1,116 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}eShop{% endblock %}</title>
+  <link rel="preconnect" href="https://esm.sh">
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-main">
+      <a class="brand" href="{% url 'home' %}" aria-label="eShop">
+        <span class="brand-mark">e</span>
+        <span>eShop</span>
+      </a>
+      <form class="header-search" action="{% url 'catalog' %}" method="get">
+        <input type="search" name="q" placeholder="Apple Watch SE 3" value="{{ request.GET.q }}">
+        <button type="submit" aria-label="Найти"><i data-lucide="search"></i></button>
+      </form>
+      <nav class="header-actions" aria-label="Профиль и корзина">
+        <a class="cart-link" href="{% url 'cart' %}">
+          <i data-lucide="shopping-cart"></i>
+          <span>Корзина</span>
+          <strong data-cart-count{% if not cart_count %} hidden{% endif %}>{{ cart_count }}</strong>
+        </a>
+        {% if user.is_authenticated %}
+          <a class="icon-link account-link" href="{% if user.is_staff %}{% url 'control_dashboard' %}{% else %}{% url 'account' %}{% endif %}">
+            <i data-lucide="user-round"></i>
+            <span class="account-username" title="{{ user.username }}">{{ user.username }}</span>
+          </a>
+          <form action="{% url 'logout' %}" method="post" class="logout-form">
+            {% csrf_token %}
+            <button class="icon-link button-reset" type="submit"><i data-lucide="log-out"></i><span>Выйти</span></button>
+          </form>
+        {% else %}
+          <a class="icon-link" href="{% url 'login' %}"><i data-lucide="user-round"></i><span>Войти</span></a>
+        {% endif %}
+      </nav>
+    </div>
+    <nav class="category-rail" aria-label="Категории">
+      <a class="nav-all" href="{% url 'catalog' %}">Все категории</a>
+      <a href="{% url 'catalog' %}?category=new">Новинки</a>
+      <a href="{% url 'catalog' %}?category=accessories">Аксессуары</a>
+      <a href="{% url 'catalog' %}?category=storage">Накопители</a>
+      <a href="{% url 'catalog' %}?category=home">Для дома</a>
+      <a href="{% url 'catalog' %}?category=smartphones">Смартфоны</a>
+      <a href="{% url 'catalog' %}?category=hobby">Хобби</a>
+    </nav>
+  </header>
+
+  {% if messages %}
+    <section class="messages" aria-label="Уведомления">
+      {% for message in messages %}
+        <div class="message message-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </section>
+  {% endif %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <a class="footer-logo" href="{% url 'home' %}" aria-label="eShop">
+        <span class="brand-mark">e</span>
+        <span>eShop</span>
+      </a>
+      <p>Каталог гаджетов с фильтрами, корзиной, демо-оплатой и QR-кодом для получения заказа.</p>
+    </div>
+
+    <nav class="footer-column" aria-label="Каталог">
+      <h2>Каталог</h2>
+      <a href="{% url 'catalog' %}">Все товары</a>
+      <a href="{% url 'catalog' %}?category=new">Новинки</a>
+      <a href="{% url 'catalog' %}?category=accessories">Аксессуары</a>
+      <a href="{% url 'catalog' %}?category=storage">Накопители</a>
+      <a href="{% url 'catalog' %}?category=smartphones">Смартфоны</a>
+    </nav>
+
+    <nav class="footer-column" aria-label="Покупателю">
+      <h2>Покупателю</h2>
+      <a href="{% url 'cart' %}">Корзина</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'account' %}">Личный кабинет</a>
+      {% else %}
+        <a href="{% url 'login' %}">Войти</a>
+        <a href="{% url 'register' %}">Регистрация</a>
+      {% endif %}
+    </nav>
+
+    <div class="footer-column footer-info">
+      <h2>Заказ</h2>
+      <p>{{ site_content.footer_order.body|default:"Оплата имитируется внутри проекта. После оформления заказ появляется в личном кабинете вместе с QR-кодом получения." }}</p>
+      {% if user.is_authenticated and user.is_staff %}
+        <a href="{% url 'control_dashboard' %}">Панель управления</a>
+      {% endif %}
+    </div>
+  </footer>
+
+  <div class="toast-host" data-toast-host></div>
+  <script>
+    window.ESHOP = {
+      cartCount: {{ cart_count|default:0 }},
+      loginUrl: "{% url 'login' %}",
+      cartUrl: "{% url 'cart' %}"
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="{% static 'js/shop-common.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

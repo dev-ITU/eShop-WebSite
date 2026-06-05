@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Заказ {{ order.order_number }} - eShop{% endblock %}
+
+{% block content %}
+<section class="order-page section-shell">
+  <div class="section-heading">
+    <p class="eyebrow">Заказ оформлен</p>
+    <h1>{{ order.order_number }}</h1>
+  </div>
+
+  <article class="order-card order-detail-card">
+    <div class="order-head">
+      <div>
+        <h3>{{ order.customer_name }}</h3>
+        <div class="order-meta">
+          <span>{{ order.created_at|date:"d.m.Y H:i" }}</span>
+          <span>{{ order.total|floatformat:0 }} ₽</span>
+          <span>{{ order.email }}</span>
+        </div>
+      </div>
+      <span class="order-status{% if order.is_ready %} ready{% endif %}">{{ order.get_status_display }}</span>
+    </div>
+
+    <ul class="order-items">
+      {% for item in order.items.all %}
+        <li>
+          <span>{{ item.product_name }} × {{ item.quantity }}</span>
+          <strong>{{ item.line_total|floatformat:0 }} ₽</strong>
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if order.qr_svg and order.is_ready %}
+      <div class="qr-row">
+        <div class="qr-code">{{ order.qr_svg|safe }}</div>
+        <div>
+          <h4>Код выдачи: {{ order.pickup_code }}</h4>
+          <p>Покажите QR-код на пункте выдачи, чтобы получить заказ.</p>
+        </div>
+      </div>
+    {% else %}
+      <div class="order-waiting">
+        <strong>Оплата: {{ order.get_payment_status_display }}</strong>
+        <p>QR-код появится после обработки демо-платежа.</p>
+        {% if order.payment_status == "waiting" %}
+          <a class="primary-button" href="{% url 'order_payment' order.order_number %}">Перейти к демо-оплате</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </article>
+
+  {% if order.payment_status == "paid" %}
+    <section class="receipt-card" id="receipt">
+      <div class="receipt-head">
+        <div>
+          <p class="eyebrow">Электронный чек</p>
+          <h2>Чек {{ order.order_number }}-R</h2>
+        </div>
+        <button class="secondary-button" type="button" onclick="window.print()">
+          <i data-lucide="printer"></i>Печать
+        </button>
+      </div>
+
+      <dl class="receipt-meta">
+        <div><dt>Дата оплаты</dt><dd>{{ order.paid_at|date:"d.m.Y H:i" }}</dd></div>
+        <div><dt>Способ</dt><dd>Демо-карта **** 4242</dd></div>
+        <div><dt>Покупатель</dt><dd>{{ order.customer_name }}</dd></div>
+        <div><dt>Email</dt><dd>{{ order.email }}</dd></div>
+      </dl>
+
+      <ul class="receipt-items">
+        {% for item in order.items.all %}
+          <li>
+            <span>{{ item.product_name }} × {{ item.quantity }}</span>
+            <strong>{{ item.line_total|floatformat:0 }} ₽</strong>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <div class="receipt-total">
+        <span>Итого оплачено</span>
+        <strong>{{ order.total|floatformat:0 }} ₽</strong>
+      </div>
+      <p class="receipt-fiscal">Фискальный признак демо-чека: {{ order.pickup_code }}</p>
+    </section>
+  {% endif %}
+
+  <div class="order-actions">
+    <a class="secondary-button" href="{% url 'catalog' %}">В каталог</a>
+    {% if user.is_authenticated %}
+      <a class="primary-button" href="{% url 'account' %}">В личный кабинет</a>
+    {% else %}
+      <a class="primary-button" href="{% url 'register' %}">Создать аккаунт</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+  {% if not order.is_ready %}
+    <script>
+      window.setTimeout(() => window.location.reload(), 3500);
+    </script>
+  {% endif %}
+{% endblock %}

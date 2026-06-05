@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Каталог - eShop{% endblock %}
+
+{% block content %}
+<section class="catalog-page">
+  <div class="catalog-title">
+    <div>
+      <p class="breadcrumbs">Главная › Каталог{% if request.GET.q %} › {{ request.GET.q }}{% endif %}</p>
+      <h1>{% if request.GET.q %}{{ request.GET.q }}{% else %}Каталог товаров{% endif %}</h1>
+    </div>
+  </div>
+  <div id="catalog-island" data-initial-query="{{ request.GET.urlencode }}"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{% static 'js/catalog-island.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "control/base.html" %}
+
+{% block title %}Пользователи - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">{{ total_count }} аккаунтов</p>
+    <h1>Пользователи</h1>
+  </div>
+</section>
+
+<form class="control-filters" method="get">
+  <input type="search" name="q" placeholder="Логин, email, имя" value="{{ query }}">
+  <button class="control-button" type="submit"><i data-lucide="search"></i>Найти</button>
+</form>
+
+<section class="control-panel">
+  <div class="control-table-wrap">
+    <table class="control-table">
+      <thead>
+        <tr><th>Аккаунт</th><th>Контакты</th><th>Заказов</th><th>Оплачено</th><th>Последний заказ</th><th>Статус</th></tr>
+      </thead>
+      <tbody>
+        {% for row in user_rows %}
+          <tr>
+            <td>{{ row.user.username }}<small>{{ row.user.get_full_name|default:"Без имени" }}</small></td>
+            <td>{{ row.user.email|default:"-" }}<small>{{ row.phone|default:"Телефон не указан" }}</small></td>
+            <td>{{ row.orders_count }}</td>
+            <td>{{ row.paid_total_display }}</td>
+            <td>
+              {% if row.last_order %}
+                {{ row.last_order.order_number }}<small>{{ row.last_order.created_at|date:"d.m.Y H:i" }}</small>
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>
+              {% if row.user.is_staff %}<span class="status-pill">Staff</span>{% endif %}
+              {% if row.user.is_active %}<span class="status-pill">Активен</span>{% else %}<span class="status-pill danger">Заблокирован</span>{% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6">Пользователи не найдены.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "control/_pagination.html" %}
+</section>
+{% endblock %}

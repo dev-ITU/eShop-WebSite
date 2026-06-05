@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Админка - eShop{% endblock %}</title>
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="control-body">
+  <aside class="control-sidebar">
+    <a class="control-brand" href="{% url 'control_dashboard' %}">
+      <span class="brand-mark">e</span>
+      <span>eShop</span>
+    </a>
+    <nav class="control-nav" aria-label="Админка">
+      {% for item in control_nav %}
+        <a href="{{ item.url }}" class="{% if item.active %}is-active{% endif %}">
+          <i data-lucide="{{ item.icon }}"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      {% endfor %}
+    </nav>
+    <div class="control-sidebar-footer">
+      <a href="{% url 'home' %}"><i data-lucide="store"></i><span>На витрину</span></a>
+      {% if user.is_authenticated %}
+        <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit"><i data-lucide="log-out"></i><span>Выйти</span></button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}"><i data-lucide="log-in"></i><span>Войти</span></a>
+      {% endif %}
+    </div>
+  </aside>
+
+  <div class="control-shell">
+    <header class="control-topbar">
+      <div>
+        <p class="control-kicker">eShop admin</p>
+        <strong>{{ user.get_full_name|default:user.username }}</strong>
+      </div>
+      <span class="control-role">{{ control_role }}</span>
+    </header>
+
+    {% if messages %}
+      <section class="control-messages" aria-label="Уведомления">
+        {% for message in messages %}
+          <div class="message message-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </section>
+    {% endif %}
+
+    <main class="control-main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  </script>
+</body>
+</html>

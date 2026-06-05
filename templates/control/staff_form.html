@@ -1,0 +1,21 @@
+{% extends "control/base.html" %}
+
+{% block title %}{{ title }} - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">{{ profile.user.username }}</p>
+    <h1>{{ title }}</h1>
+  </div>
+  <a class="control-button ghost" href="{% url 'control_staff' %}"><i data-lucide="arrow-left"></i>К ролям</a>
+</section>
+
+<form class="control-form compact" method="post">
+  {% csrf_token %}
+  {% include "control/_form_fields.html" %}
+  <div class="control-form-actions">
+    <button class="control-button" type="submit"><i data-lucide="save"></i>Сохранить</button>
+  </div>
+</form>
+{% endblock %}

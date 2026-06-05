@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Демо-оплата {{ order.order_number }} - eShop{% endblock %}
+
+{% block content %}
+<section class="payment-page section-shell">
+  <div class="section-heading">
+    <p class="eyebrow">Демо-оплата</p>
+    <h1>Оплата заказа</h1>
+  </div>
+
+  <div class="payment-layout">
+    <form class="payment-panel" method="post">
+      {% csrf_token %}
+      <div class="payment-card-preview" aria-label="Демо-карта">
+        <span>eShop Pay</span>
+        <strong>4242 4242 4242 4242</strong>
+        <small>12/30 · 123</small>
+      </div>
+
+      <div class="payment-fields">
+        <label>
+          <span>Номер карты</span>
+          <input value="4242 4242 4242 4242" inputmode="numeric" readonly>
+        </label>
+        <label>
+          <span>Срок</span>
+          <input value="12/30" readonly>
+        </label>
+        <label>
+          <span>CVV</span>
+          <input value="123" readonly>
+        </label>
+      </div>
+
+      <button class="primary-button wide" type="submit">
+        <i data-lucide="shield-check"></i>Подтвердить демо-оплату
+      </button>
+      <a class="secondary-button wide" href="{% url 'order_detail' order.order_number %}">Вернуться к заказу</a>
+    </form>
+
+    <aside class="checkout-summary">
+      <h2>К оплате</h2>
+      <div class="summary-line">
+        <span>Заказ</span>
+        <strong>{{ order.order_number }}</strong>
+      </div>
+      {% for item in order.items.all %}
+        <div class="summary-line">
+          <span>{{ item.product_name }} × {{ item.quantity }}</span>
+          <strong>{{ item.line_total|floatformat:0 }} ₽</strong>
+        </div>
+      {% endfor %}
+      <div class="summary-total">
+        <span>Итого</span>
+        <strong>{{ order.total|floatformat:0 }} ₽</strong>
+      </div>
+      <p>Статус сейчас: {{ order.get_payment_status_display }}</p>
+    </aside>
+  </div>
+</section>
+{% endblock %}

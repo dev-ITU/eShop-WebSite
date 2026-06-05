@@ -1,0 +1,65 @@
+{% extends "control/base.html" %}
+
+{% block title %}Товары - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">{{ total_count }} позиций</p>
+    <h1>Товары</h1>
+  </div>
+  <div class="control-actions">
+    <a class="control-button ghost" href="{% url 'control_categories' %}"><i data-lucide="folder-tree"></i>Категории</a>
+    <a class="control-button" href="{% url 'control_product_create' %}"><i data-lucide="plus"></i>Товар</a>
+  </div>
+</section>
+
+<form class="control-filters" method="get">
+  <input type="search" name="q" placeholder="Поиск по названию, бренду, slug" value="{{ query }}">
+  <select name="category">
+    <option value="">Все категории</option>
+    {% for category in categories %}
+      <option value="{{ category.slug }}" {% if current_category == category.slug %}selected{% endif %}>{{ category.name }}</option>
+    {% endfor %}
+  </select>
+  <select name="stock">
+    <option value="">Все остатки</option>
+    <option value="low" {% if current_stock == "low" %}selected{% endif %}>Низкий остаток</option>
+    <option value="empty" {% if current_stock == "empty" %}selected{% endif %}>Скоро в продаже</option>
+  </select>
+  <button class="control-button" type="submit"><i data-lucide="search"></i>Найти</button>
+</form>
+
+<section class="control-panel">
+  <div class="control-table-wrap">
+    <table class="control-table">
+      <thead>
+        <tr><th>Товар</th><th>Категория</th><th>Цена</th><th>Остаток</th><th>Статус</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+          <tr>
+            <td>{{ product.name }}<small>{{ product.brand }} · {{ product.slug }}</small></td>
+            <td>{{ product.category.name }}</td>
+            <td>{{ product.price|floatformat:0 }} ₽</td>
+            <td><span class="stock-pill {% if product.stock == 0 %}danger{% endif %}">{{ product.stock }}</span></td>
+            <td>
+              {% if not product.is_active %}
+                <span class="status-pill muted">Скрыт</span>
+              {% elif product.stock == 0 %}
+                <span class="status-pill muted">Скоро в продаже</span>
+              {% else %}
+                <span class="status-pill">Активен</span>
+              {% endif %}
+            </td>
+            <td><a class="table-action" href="{% url 'control_product_edit' product.pk %}">Открыть</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6">Товары не найдены.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "control/_pagination.html" %}
+</section>
+{% endblock %}

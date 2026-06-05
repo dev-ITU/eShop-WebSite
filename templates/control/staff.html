@@ -1,0 +1,61 @@
+{% extends "control/base.html" %}
+
+{% block title %}Роли - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">Доступы панели управления</p>
+    <h1>Роли и администраторы</h1>
+  </div>
+  <a class="control-button" href="{% url 'control_staff_create' %}"><i data-lucide="user-plus"></i>Создать админа</a>
+</section>
+
+<section class="control-grid two staff-grid">
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Пользователи админки</h2></div>
+    <div class="control-table-wrap">
+      <table class="control-table compact-table staff-table">
+        <thead>
+          <tr><th>Пользователь</th><th>Роль</th><th>Статус</th><th>Создан</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for profile in profiles %}
+            <tr>
+              <td>{{ profile.user.username }}<small>{{ profile.user.email }}</small></td>
+              <td>{{ profile.get_role_display }}</td>
+              <td>
+                {% if profile.is_active and profile.user.is_active %}
+                  <span class="status-pill">Активен</span>
+                {% else %}
+                  <span class="status-pill danger">Отключен</span>
+                {% endif %}
+              </td>
+              <td>{{ profile.created_at|date:"d.m.Y" }}</td>
+              <td><a class="table-action" href="{% url 'control_staff_edit' profile.pk %}">Изменить</a></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5">Администраторов еще нет.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Матрица ролей</h2></div>
+    <div class="role-matrix">
+      {% for row in role_rows %}
+        <div class="role-row">
+          <strong>{{ row.label }}</strong>
+          <div>
+            {% for permission in row.permissions %}
+              <span class="{% if permission.enabled %}enabled{% endif %}">{{ permission.label }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+{% endblock %}

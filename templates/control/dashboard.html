@@ -1,0 +1,97 @@
+{% extends "control/base.html" %}
+
+{% block title %}Обзор - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">Состояние магазина</p>
+    <h1>Панель управления</h1>
+  </div>
+  {% if service_mode_open or can_manage_staff %}
+    <a class="control-button ghost" href="{% url 'control_service' %}"><i data-lucide="user-plus"></i>Создать админа</a>
+  {% endif %}
+</section>
+
+<section class="control-metric-grid">
+  {% for metric in metrics %}
+    <article class="control-metric">
+      <i data-lucide="{{ metric.icon }}"></i>
+      <span>{{ metric.label }}</span>
+      <strong>{{ metric.value }}</strong>
+      <small>{{ metric.hint }}</small>
+    </article>
+  {% endfor %}
+</section>
+
+<section class="control-grid two">
+  <article class="control-panel">
+    <div class="control-panel-head">
+      <h2>Последние заказы</h2>
+      <a href="{% url 'control_orders' %}">Все</a>
+    </div>
+    <div class="control-table-wrap">
+      <table class="control-table compact-table">
+        <thead>
+          <tr><th>Номер</th><th>Клиент</th><th>Статус</th><th>Сумма</th></tr>
+        </thead>
+        <tbody>
+          {% for order in recent_orders %}
+            <tr>
+              <td>{{ order.order_number }}</td>
+              <td>{{ order.customer_name }}<small>{{ order.email }}</small></td>
+              <td><span class="status-pill">{{ order.get_status_display }}</span></td>
+              <td>{{ order.total|floatformat:0 }} ₽</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4">Заказов пока нет.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="control-panel">
+    <div class="control-panel-head">
+      <h2>Товары с низким остатком</h2>
+      <a href="{% url 'control_products' %}?stock=low">Открыть</a>
+    </div>
+    <div class="control-table-wrap">
+      <table class="control-table compact-table">
+        <thead>
+          <tr><th>Товар</th><th>Категория</th><th>Остаток</th></tr>
+        </thead>
+        <tbody>
+          {% for product in low_stock_products %}
+            <tr>
+              <td>{{ product.name }}<small>{{ product.brand }}</small></td>
+              <td>{{ product.category.name }}</td>
+              <td><span class="stock-pill {% if product.stock == 0 %}danger{% endif %}">{{ product.stock }}</span></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="3">Критичных остатков нет.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>
+
+<section class="control-panel">
+  <div class="control-panel-head">
+    <h2>Популярные публичные страницы за 7 дней</h2>
+    <a href="{% url 'control_web_analytics' %}">Веб-аналитика</a>
+  </div>
+  <div class="control-bars">
+    {% for row in top_pages %}
+      <div class="bar-row">
+        <span>{{ row.path }}</span>
+        <div><b style="width: {{ row.percent }}%"></b></div>
+        <strong>{{ row.count }}</strong>
+      </div>
+    {% empty %}
+      <p class="control-muted">Посещения начнут появляться после открытия страниц.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

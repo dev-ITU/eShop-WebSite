@@ -1,0 +1,38 @@
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Django / local runtime
+.env
+.env.*
+!.env.example
+db.sqlite3
+media/
+staticfiles/
+
+# Generated artifacts
+tmp/
+*.log
+*.pid
+*.sqlite3
+
+# Node/tooling if added later
+node_modules/
+dist/
+build/

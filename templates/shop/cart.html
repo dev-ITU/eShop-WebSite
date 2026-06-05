@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Корзина - eShop{% endblock %}
+
+{% block content %}
+<section class="cart-page section-shell">
+  <div class="section-heading">
+    <p class="eyebrow">Корзина</p>
+    <h1>Товары к оформлению</h1>
+  </div>
+  <div id="cart-island"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{% static 'js/cart-island.js' %}"></script>
+{% endblock %}

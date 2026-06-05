@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация - eShop{% endblock %}
+
+{% block content %}
+<section class="auth-page section-shell">
+  <div class="auth-panel">
+    <p class="eyebrow">Регистрация</p>
+    <h1>Новый аккаунт</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <label>
+          <span>{{ field.label }}</span>
+          {{ field }}
+          {{ field.errors }}
+        </label>
+      {% endfor %}
+      <button class="primary-button wide" type="submit"><i data-lucide="user-plus"></i>Создать аккаунт</button>
+    </form>
+    <p class="auth-link">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+  </div>
+</section>
+
+{% if show_verification_modal %}
+  <div class="modal-backdrop" role="presentation">
+    <section class="verification-modal" role="dialog" aria-modal="true" aria-labelledby="verification-title">
+      <p class="eyebrow">Письмо отправлено</p>
+      <h2 id="verification-title">Подтвердите регистрацию</h2>
+      <p>На {{ verification_email }} отправлен код подтверждения. В демо-режиме письмо показано прямо здесь.</p>
+      <div class="verification-code" aria-label="Код подтверждения">{{ verification_code }}</div>
+      <form method="post" class="verification-form">
+        {% csrf_token %}
+        <input type="hidden" name="registration_step" value="verify">
+        <label>
+          <span>Код из письма</span>
+          <input name="verification_code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" autofocus required>
+        </label>
+        {% if verification_error %}<p class="form-error">{{ verification_error }}</p>{% endif %}
+        <button class="primary-button wide" type="submit"><i data-lucide="mail-check"></i>Подтвердить</button>
+        <a class="secondary-button wide" href="{% url 'register' %}?reset=1">Изменить данные</a>
+      </form>
+    </section>
+  </div>
+{% endif %}
+{% endblock %}

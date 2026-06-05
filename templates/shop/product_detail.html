@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} - eShop{% endblock %}
+
+{% block content %}
+<section class="product-detail section-shell">
+  <div class="detail-media">
+    <img src="{% static product.image %}" alt="{{ product.name }}">
+    {% if product.discount_percent %}<span class="badge">-{{ product.discount_percent }}%</span>{% endif %}
+  </div>
+  <div class="detail-info">
+    <p class="eyebrow">{{ product.category.name }} · {{ product.brand }}</p>
+    <h1>{{ product.name }}</h1>
+    <p class="detail-description">{{ product.description }}</p>
+    <div class="detail-price">
+      <strong>{{ product.price|floatformat:0 }} ₽</strong>
+      {% if product.old_price %}<span>{{ product.old_price|floatformat:0 }} ₽</span>{% endif %}
+    </div>
+    <div class="detail-actions">
+      {% if product.in_stock %}
+        <button class="primary-button" type="button" data-add-to-cart="{{ product.id }}">
+          <i data-lucide="shopping-cart"></i>Добавить в корзину
+        </button>
+      {% else %}
+        <button class="primary-button soon-button" type="button" disabled>
+          <i data-lucide="clock"></i>Скоро в продаже
+        </button>
+      {% endif %}
+      <a class="secondary-button" href="{% url 'catalog' %}"><i data-lucide="arrow-left"></i>В каталог</a>
+    </div>
+    <dl class="spec-list">
+      {% if product.color %}<div><dt>Цвет</dt><dd>{{ product.color }}</dd></div>{% endif %}
+      {% if product.memory %}<div><dt>Память</dt><dd>{{ product.memory }}</dd></div>{% endif %}
+      {% if product.screen_size %}<div><dt>Экран</dt><dd>{{ product.screen_size }}</dd></div>{% endif %}
+      {% if product.in_stock %}
+        <div><dt>Остаток</dt><dd>{{ product.stock }} шт.</dd></div>
+      {% else %}
+        <div><dt>Статус</dt><dd>Скоро в продаже</dd></div>
+      {% endif %}
+      {% for key, value in visible_attributes.items %}
+        <div><dt>{{ key }}</dt><dd>{{ value }}</dd></div>
+      {% endfor %}
+    </dl>
+  </div>
+</section>
+
+{% if related_products %}
+<section class="section-shell">
+  <div class="section-heading">
+    <p class="eyebrow">Еще в категории</p>
+    <h2>Похожие товары</h2>
+  </div>
+  <div class="product-grid compact">
+    {% for item in related_products %}
+      <article class="product-card{% if not item.in_stock %} is-soon{% endif %}">
+        <a class="product-image" href="{{ item.get_absolute_url }}"><img src="{% static item.image %}" alt="{{ item.name }}"></a>
+        <div class="product-body">
+          <a class="product-title" href="{{ item.get_absolute_url }}">{{ item.name }}</a>
+          <div class="price-row"><strong>{{ item.price|floatformat:0 }} ₽</strong></div>
+          {% if item.in_stock %}
+            <button class="buy-button" type="button" data-add-to-cart="{{ item.id }}"><i data-lucide="plus"></i>В корзину</button>
+          {% else %}
+            <button class="buy-button soon-button" type="button" disabled><i data-lucide="clock"></i>Скоро в продаже</button>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

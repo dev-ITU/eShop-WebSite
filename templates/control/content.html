@@ -1,0 +1,37 @@
+{% extends "control/base.html" %}
+
+{% block title %}Контент - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">Тексты и блоки витрины</p>
+    <h1>Контент</h1>
+  </div>
+  <a class="control-button" href="{% url 'control_content_create' %}"><i data-lucide="plus"></i>Блок</a>
+</section>
+
+<section class="control-panel">
+  <div class="control-table-wrap">
+    <table class="control-table">
+      <thead>
+        <tr><th>Ключ</th><th>Название</th><th>Тип</th><th>Обновлен</th><th>Статус</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for block in blocks %}
+          <tr>
+            <td>{{ block.key }}<small>{{ block.body|truncatechars:110 }}</small></td>
+            <td>{{ block.title }}</td>
+            <td>{{ block.get_block_type_display }}</td>
+            <td>{{ block.updated_at|date:"d.m.Y H:i" }}<small>{% if block.updated_by %}{{ block.updated_by.username }}{% endif %}</small></td>
+            <td>{% if block.is_active %}<span class="status-pill">Активен</span>{% else %}<span class="status-pill muted">Скрыт</span>{% endif %}</td>
+            <td><a class="table-action" href="{% url 'control_content_edit' block.pk %}">Открыть</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6">Контентных блоков пока нет.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

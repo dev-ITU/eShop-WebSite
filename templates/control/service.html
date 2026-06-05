@@ -1,0 +1,46 @@
+{% extends "control/base.html" %}
+
+{% block title %}Сервисный режим - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">Сервисный режим</p>
+    <h1>Создать пользователя админки</h1>
+  </div>
+  {% if user.is_authenticated %}
+    <a class="control-button ghost" href="{% url 'control_staff' %}"><i data-lucide="arrow-left"></i>К ролям</a>
+  {% endif %}
+</section>
+
+<section class="control-grid two">
+  <form class="control-form aligned-form" method="post">
+    {% csrf_token %}
+    {% include "control/_staff_user_form.html" %}
+    <div class="control-form-actions">
+      <button class="control-button" type="submit"><i data-lucide="user-plus"></i>Создать</button>
+    </div>
+    {% if service_open %}
+      <p class="control-form-note">Сервисный режим открыт. После создания первого активного профиля вход в админку идет через обычное окно "Войти".</p>
+    {% else %}
+      <p class="control-form-note">Сервисный режим закрыт, создание доступно только роли с правом управления админами.</p>
+    {% endif %}
+  </form>
+
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Роли</h2></div>
+    <div class="role-matrix">
+      {% for row in role_rows %}
+        <div class="role-row">
+          <strong>{{ row.label }}</strong>
+          <div>
+            {% for permission in row.permissions %}
+              <span class="{% if permission.enabled %}enabled{% endif %}">{{ permission.label }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+{% endblock %}

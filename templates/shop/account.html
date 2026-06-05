@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Личный кабинет - eShop{% endblock %}
+
+{% block content %}
+<section class="account-page section-shell">
+  <div class="section-heading">
+    <p class="eyebrow">Личный кабинет</p>
+    <h1>Профиль и история заказов</h1>
+  </div>
+  <div id="account-island"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{% static 'js/account-island.js' %}"></script>
+{% endblock %}

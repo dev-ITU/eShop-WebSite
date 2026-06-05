@@ -1,0 +1,113 @@
+{% extends "control/base.html" %}
+
+{% block title %}Системная аналитика - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">Продажи, склад, платежи</p>
+    <h1>Системная аналитика</h1>
+  </div>
+  <a class="control-button ghost" href="{% url 'control_web_analytics' %}"><i data-lucide="activity"></i>Веб-аналитика</a>
+</section>
+
+<section class="control-metric-grid">
+  {% for metric in system_metrics %}
+    <article class="control-metric">
+      <span>{{ metric.label }}</span>
+      <strong>{{ metric.value }}</strong>
+      <small>{{ metric.hint }}</small>
+    </article>
+  {% endfor %}
+</section>
+
+<section class="control-grid two">
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Статусы заказов</h2></div>
+    <div class="control-bars">
+      {% for row in order_status_rows %}
+        <div class="bar-row">
+          <span>{{ row.label }}</span>
+          <div><b style="width: {{ row.percent }}%"></b></div>
+          <strong>{{ row.count }}</strong>
+        </div>
+      {% empty %}
+        <p class="control-muted">Нет заказов.</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Статусы оплаты</h2></div>
+    <div class="control-bars">
+      {% for row in payment_rows %}
+        <div class="bar-row">
+          <span>{{ row.label }}</span>
+          <div><b style="width: {{ row.percent }}%"></b></div>
+          <strong>{{ row.count }}</strong>
+        </div>
+      {% empty %}
+        <p class="control-muted">Нет платежей.</p>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+
+<section class="control-grid two">
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Выручка по категориям</h2></div>
+    <div class="control-bars">
+      {% for row in category_rows %}
+        <div class="bar-row">
+          <span>{{ row.label }}</span>
+          <div><b style="width: {{ row.percent }}%"></b></div>
+          <strong>{{ row.total_display }}</strong>
+        </div>
+      {% empty %}
+        <p class="control-muted">Данных по категориям пока нет.</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Выручка по брендам</h2></div>
+    <div class="control-bars">
+      {% for row in brand_rows %}
+        <div class="bar-row">
+          <span>{{ row.label }}<small>{{ row.quantity }} шт.</small></span>
+          <div><b style="width: {{ row.percent }}%"></b></div>
+          <strong>{{ row.total_display }}</strong>
+        </div>
+      {% empty %}
+        <p class="control-muted">Данных по брендам пока нет.</p>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+
+<section class="control-panel">
+  <div class="control-panel-head">
+    <h2>Складовой риск</h2>
+    <a href="{% url 'control_products' %}?stock=low">Открыть товары</a>
+  </div>
+  <div class="control-table-wrap">
+    <table class="control-table">
+      <thead>
+        <tr><th>Товар</th><th>Категория</th><th>Цена</th><th>Остаток</th></tr>
+      </thead>
+      <tbody>
+        {% for product in low_stock_products %}
+          <tr>
+            <td>{{ product.name }}<small>{{ product.brand }}</small></td>
+            <td>{{ product.category.name }}</td>
+            <td>{{ product.price|floatformat:0 }} ₽</td>
+            <td><span class="stock-pill {% if product.stock == 0 %}danger{% endif %}">{{ product.stock }}</span></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">Нет товаров с низким остатком.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

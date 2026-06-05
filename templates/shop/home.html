@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}eShop - маркетплейс гаджетов{% endblock %}
+
+{% block content %}
+<a class="hero" href="{% url 'catalog' %}?category=smartphones&brand=Apple&q=iPhone+17e&sort=featured" style="--hero-image: url('{% static "img/biggeek-hero-iphone17e.jpg" %}')" aria-label="Смотреть iPhone 17e"></a>
+
+<section class="section-shell home-products">
+  <div class="section-heading">
+    <h2>Новиночки</h2>
+  </div>
+  <div class="product-grid">
+    {% for product in featured_products %}
+      <article class="product-card{% if not product.in_stock %} is-soon{% endif %}">
+        <a class="product-image" href="{{ product.get_absolute_url }}">
+          <img src="{% static product.image %}" alt="{{ product.name }}">
+        </a>
+        <div class="product-body">
+          <a class="product-title" href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+          <p>{{ product.brand }} · {{ product.category.name }}</p>
+          <div class="price-row">
+            <strong>{{ product.price|floatformat:0 }} ₽</strong>
+            {% if product.old_price %}<span>{{ product.old_price|floatformat:0 }} ₽</span>{% endif %}
+            {% if product.in_stock %}
+              <button class="card-cart-button" type="button" data-add-to-cart="{{ product.id }}" aria-label="Добавить в корзину">
+                <i data-lucide="shopping-cart"></i>
+              </button>
+            {% else %}
+              <span class="soon-sale-pill">Скоро в продаже</span>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

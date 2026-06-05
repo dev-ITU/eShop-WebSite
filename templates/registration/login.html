@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Вход - eShop{% endblock %}
+
+{% block content %}
+<section class="auth-page section-shell">
+  <div class="auth-panel">
+    <p class="eyebrow">Авторизация</p>
+    <h1>Вход в аккаунт</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <label>
+          <span>{{ field.label }}</span>
+          {{ field }}
+          {{ field.errors }}
+        </label>
+      {% endfor %}
+      <button class="primary-button wide" type="submit"><i data-lucide="log-in"></i>Войти</button>
+    </form>
+    <p class="auth-link"><a href="{% url 'password_reset' %}">Забыли пароль?</a></p>
+    <p class="auth-link">Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+  </div>
+</section>
+{% endblock %}

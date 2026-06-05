@@ -1,0 +1,114 @@
+{% extends "control/base.html" %}
+
+{% block title %}Веб-аналитика - eShop{% endblock %}
+
+{% block content %}
+<section class="control-title-row">
+  <div>
+    <p class="control-kicker">Посещения и поведение</p>
+    <h1>Веб-аналитика</h1>
+  </div>
+  <form class="range-switch" method="get">
+    <button name="days" value="7" class="{% if days == 7 %}is-active{% endif %}">7 дней</button>
+    <button name="days" value="30" class="{% if days == 30 %}is-active{% endif %}">30 дней</button>
+    <button name="days" value="90" class="{% if days == 90 %}is-active{% endif %}">90 дней</button>
+  </form>
+</section>
+
+<section class="control-metric-grid">
+  {% for metric in web_metrics %}
+    <article class="control-metric">
+      <span>{{ metric.label }}</span>
+      <strong>{{ metric.value }}</strong>
+      <small>{{ metric.hint }}</small>
+    </article>
+  {% endfor %}
+</section>
+
+<section class="control-panel">
+  <div class="control-panel-head"><h2>Динамика публичных просмотров</h2></div>
+  <div class="control-bars daily-bars">
+    {% for row in daily_rows %}
+      <div class="bar-row">
+        <span>{{ row.label }}</span>
+        <div><b style="width: {{ row.percent }}%"></b></div>
+        <strong>{{ row.count }}</strong>
+      </div>
+    {% empty %}
+      <p class="control-muted">Пока нет посещений за выбранный период.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="control-grid two">
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Топ страниц</h2></div>
+    <div class="control-bars">
+      {% for row in top_pages %}
+        <div class="bar-row">
+          <span>{{ row.path }}<small>Сессий: {{ row.unique }}</small></span>
+          <div><b style="width: {{ row.percent }}%"></b></div>
+          <strong>{{ row.count }}</strong>
+        </div>
+      {% empty %}
+        <p class="control-muted">Нет данных.</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Устройства</h2></div>
+    <div class="control-bars">
+      {% for row in device_rows %}
+        <div class="bar-row">
+          <span>{{ row.label }}</span>
+          <div><b style="width: {{ row.percent }}%"></b></div>
+          <strong>{{ row.count }}</strong>
+        </div>
+      {% empty %}
+        <p class="control-muted">Нет данных.</p>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+
+<section class="control-grid two">
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Источники переходов</h2></div>
+    <div class="control-bars">
+      {% for row in referrers %}
+        <div class="bar-row">
+          <span>{{ row.referrer|truncatechars:64 }}</span>
+          <div><b style="width: {{ row.percent }}%"></b></div>
+          <strong>{{ row.count }}</strong>
+        </div>
+      {% empty %}
+        <p class="control-muted">Внешних referrer пока нет.</p>
+      {% endfor %}
+    </div>
+  </article>
+
+  <article class="control-panel">
+    <div class="control-panel-head"><h2>Последние события</h2></div>
+    <div class="control-table-wrap">
+      <table class="control-table">
+        <thead>
+          <tr><th>Путь</th><th>Статус</th><th>Устройство</th><th>Время</th></tr>
+        </thead>
+        <tbody>
+          {% for view in recent_views %}
+            <tr>
+              <td>{{ view.path }}<small>{% if view.user %}{{ view.user.username }}{% else %}Гость{% endif %}</small></td>
+              <td>{{ view.status_code }}</td>
+              <td>{{ view.device|default:"-" }}</td>
+              <td>{{ view.created_at|date:"d.m.Y H:i" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4">Событий пока нет.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>
+{% endblock %}
