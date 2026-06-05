@@ -1,6 +1,17 @@
 # eShop
 
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/Django-5.x-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Ready-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+
 Интернет-магазин электроники на Django с каталогом, корзиной, оформлением заказа, личным кабинетом и кастомной административной панелью.
+
+## Ссылки
+
+- GitHub: https://github.com/dev-ITU/eShop-WebSite
+- Production: https://eshop.itunity.dev
+- Кастомная админка: `/control/`
 
 ## Стек
 
@@ -25,6 +36,18 @@
 - Кастомная админка `/control/`: товары, категории, контент, заказы, пользователи, роли сотрудников, системная и веб-аналитика.
 - Сервисный режим для создания первого пользователя админки.
 - Seed-команда с товарами, ценами, характеристиками и изображениями из публичной витрины BigGeek.
+
+## Структура
+
+```text
+config/                 Django settings, URLs, Celery app
+shop/                   Основное приложение магазина
+shop/management/        Команды наполнения демо-данными
+static/                 CSS, JS и изображения товаров
+templates/              HTML-шаблоны публичной части и админки
+docker-compose.yml      Dev-сборка
+docker-compose.prod.yml Production-сборка
+```
 
 ## Локальный запуск
 
@@ -81,6 +104,13 @@ docker compose run --rm web python manage.py check
 docker compose run --rm web python manage.py test shop
 ```
 
+## Документация
+
+- [Deployment](docs/DEPLOYMENT.md)
+- [Changelog](CHANGELOG.md)
+
 ## Репозиторий
 
 В git не добавляются локальные секреты, база SQLite, пользовательские медиа, `staticfiles/`, временные документы и кеши Python. Статические изображения товаров лежат в `static/img/biggeek-products/` и нужны для демо-каталога.
+
+Лицензия явно не назначена. Все права сохраняются за владельцем репозитория до выбора отдельной лицензии.
